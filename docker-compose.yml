@@ -27,7 +27,7 @@ services:
     user: root
     volumes:
       - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/log:/var/log:ro
+      - /var/log/server:/var/log/server:ro
     depends_on:
       - loki
 

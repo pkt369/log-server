@@ -2,7 +2,10 @@ filebeat.inputs:
   - type: log
     enabled: true
     paths:
-      - /var/log/*.log
+      - /var/log/server/*.log
+    json.keys_under_root: true
+    json.add_error_key: true
+    json.message_key: message
 
 output.loki:
   hosts: ["http://loki:3100"]
