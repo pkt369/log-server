@@ -21,13 +21,16 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
 
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:8.17.7
-    container_name: filebeat
-    user: root
+  grafana-alloy:
+    image: grafana/alloy:latest
+    ports:
+      - "12345:12345"
+    container_name: grafana-alloy
     volumes:
-      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./alloy-config.alloy:/etc/alloy/config.alloy:ro
       - /var/log/server:/var/log/server:ro
+    command:
+      - --config.file=/etc/alloy/config.alloy
     depends_on:
       - loki
 
