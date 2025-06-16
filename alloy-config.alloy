@@ -12,6 +12,29 @@ loki.source.file "local_files" {
     forward_to = [loki.process.add_new_label.receiver]
 }
 
+loki.source.file "springboot_json" {
+  targets = ["/var/log/server/*.log"]
+
+  pipeline_stages = [
+    {
+      json = {
+        expressions = {
+          timestamp = "timestamp"
+          message = "message"
+          level = "level"
+          logger = "logger"
+          thread = "thread"
+        }
+      }
+    }
+  ]
+
+  labels = {
+    job  = "springboot"
+    host = "${HOSTNAME}"
+  }
+}
+
 // Transformation: pull some data out of the log message, and turn it into a label
 loki.process "add_new_label" {
     stage.logfmt {
