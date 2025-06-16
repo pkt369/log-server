@@ -12,25 +12,17 @@ loki.process "springboot_json_parser" {
   stage.json {
     expressions = {
       timestamp = "timestamp",
-      message = "message",
       level = "level",
-      logger = "logger",
       thread = "thread",
-      version = "`\"@version\"`",
-      level_value = "level_value",
-      log_path = "LOG_PATH",
+      logger = "logger",
+      message = "message",
     }
-  }
-
-  stage.timestamp {
-    source = "timestamp"
-    format = "RFC3339Nano"
   }
 
   stage.labels {
     values = {
       job = "springboot",
-      host = env("HOSTNAME"),
+      host = "prod-server",
       level = "level",
       logger = "logger",
       thread = "thread",
