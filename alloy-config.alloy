@@ -19,19 +19,19 @@ loki.source.file "springboot_json" {
     {
       json = {
         expressions = {
-          timestamp = "timestamp"
-          message = "message"
-          level = "level"
-          logger = "logger"
-          thread = "thread"
-        }
-      }
-    }
+          timestamp = "timestamp",
+          message = "message",
+          level = "level",
+          logger = "logger",
+          thread = "thread",
+        },
+      },
+    },
   ]
 
   labels = {
-    job  = "springboot"
-    host = "${HOSTNAME}"
+    job  = "springboot",
+    host = "${HOSTNAME}",
   }
 }
 
