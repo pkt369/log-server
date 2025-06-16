@@ -16,7 +16,15 @@ loki.process "springboot_json_parser" {
       level = "level",
       logger = "logger",
       thread = "thread",
+      version = "`\"@version\"`",
+      level_value = "level_value",
+      log_path = "LOG_PATH",
     }
+  }
+
+  stage.timestamp {
+    source = "timestamp"
+    format = "RFC3339Nano"
   }
 
   stage.labels {
@@ -29,9 +37,12 @@ loki.process "springboot_json_parser" {
     }
   }
 
+  stage.output {
+    source = "message"
+  }
+
   forward_to = [loki.write.local_loki.receiver]
 }
-
 
 // Anything that comes into this component gets written to the loki remote API
 loki.write "local_loki" {
