@@ -17,3 +17,11 @@ CREATE TABLE spring_logs (
 ) ENGINE = MergeTree()
 ORDER BY timestamp;
 ```
+
+## create .env file
+You can see ${CLICKHOUSE_PASSWORD} in docker compose file.
+It means I'll use this variable from env file.
+
+```env
+CLICKHOUSE_PASSWORD=my_pass_word
+```
