@@ -10,10 +10,11 @@ create table in Clickhouse for getting log from Vector.
 CREATE TABLE spring_logs (
     timestamp DateTime,
     level String,
+    profile String,
     thread String,
     logger String,
     message String,
-    stacktrace String
+    stack_trace String
 ) ENGINE = MergeTree()
 ORDER BY timestamp;
 ```

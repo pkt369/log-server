@@ -11,7 +11,21 @@ transforms:
     inputs:
       - file_logs
     source: |
-      . = parse_json!(.message)
+      .parsed = parse_json!(.message)
+      .timestamp = format_timestamp!(parse_timestamp!(.parsed.timestamp, "%+"), "%F %T")
+      .level = .parsed.level
+      .profile = .parsed.profile
+      .thread = .parsed.thread
+      .logger = .parsed.logger
+      .message = .parsed.message
+      .stack_trace = .parsed.stack_trace
+
+# sinks:
+#   debug_console:
+#     type: console
+#     inputs: [parse_json]
+#     encoding:
+#       codec: json
 
 sinks:
   clickhouse_sink:
