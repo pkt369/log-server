@@ -1,0 +1,27 @@
+sources:
+  file_logs:
+    type: file
+    include:
+      - /Users/sejun/project/BE-senagg/log/*.log
+    ignore_older_secs: 86400
+
+transforms:
+  parse_json:
+    type: remap
+    inputs:
+      - file_logs
+    source: |
+      . = parse_json!(.message)
+
+sinks:
+  clickhouse_sink:
+    type: clickhouse
+    inputs:
+      - parse_json
+    endpoint: http://clickhouse:8123
+    database: default
+    table: spring_logs
+    auth:
+      strategy: "basic"
+      user: "default"
+      password: ${CLICKHOUSE_PASSWORD}

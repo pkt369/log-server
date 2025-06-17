@@ -1,13 +1,38 @@
 services:
-  loki:
-    image: grafana/loki:3.5.1
-    container_name: loki
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
     ports:
-      - "3100:3100"
+      - "8123:8123"     # HTTP interface
+      - "9000:9000"     # Native TCP interface
     volumes:
-      - ./loki-config.yml:/etc/loki/local-config.yaml
-      - loki-data:/var/loki
-    command: -config.file=/etc/loki/local-config.yaml
+      - clickhouse-data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    environment:
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:8123 || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+
+  vector:
+    image: timberio/vector:latest-debian
+    container_name: vector
+    volumes:
+      - ./vector.yaml:/etc/vector/vector.yaml:ro
+      - /var/log/server:/var/log/server:ro
+    environment:
+      - CLICKHOUSE_USER=default
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD}
+    depends_on:
+      clickhouse:
+        condition: service_healthy
 
   grafana:
     image: grafana/grafana:latest
@@ -16,27 +41,11 @@ services:
       - "3030:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
-    depends_on:
-      - loki
     volumes:
       - grafana-data:/var/lib/grafana
-
-  alloy:
-    image: grafana/alloy:latest
-    ports:
-      - "12345:12345"
-    container_name: grafana-alloy
-    volumes:
-      - ./alloy-config.alloy:/etc/alloy/config.alloy:ro
-      - /var/log/server:/var/log/server:ro
-    command:
-      - run
-      - "--server.http.listen-addr=0.0.0.0:12345"
-      - "--storage.path=/var/lib/alloy/data"
-      - "/etc/alloy/config.alloy"
     depends_on:
-      - loki
+      - clickhouse
 
 volumes:
-  loki-data:
+  clickhouse-data:
   grafana-data:
