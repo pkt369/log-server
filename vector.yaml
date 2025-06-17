@@ -2,7 +2,7 @@ sources:
   file_logs:
     type: file
     include:
-      - /Users/sejun/project/BE-senagg/log/*.log
+      - /var/log/server/*.log
     ignore_older_secs: 86400
 
 transforms:
